@@ -9,16 +9,15 @@
 
 #include "constant.h"
 #include "tcp_server.h"
-
 #define HELP_TEXT                                                                                  \
     "Usage: tfos [OPTIONS]\n\n"                                                                    \
     "OPTIONS:\n"                                                                                   \
-    "  -h, --help            Show this help message\n"                                             \
     "  -r, --root            Where the served files are (default: current working directory)\n"    \
     "  -p, --port            Which port to listen on    (default: 18180)\n"                        \
-    "  -v, --verbose         Enable debug log\n"                                                   \
     "  -t, --timeout         Inactive socket timeout (after connected) in seconds (default: 60)\n" \
-    "  -c, --max-connections Maximum number of concurrent connections (default: 10)\n"
+    "  -c, --max-connections Maximum number of concurrent connections (default: 10)\n"             \
+    "  -h, --help            Show this help message\n"                                             \
+    "  -v, --verbose         Enable debug log\n"
 
 static std::string EMPTY;
 
