@@ -10,14 +10,15 @@
 #include "constant.h"
 #include "tcp_server.h"
 
-#define HELP_TEXT                                                                            \
-    "Usage: tfos [OPTIONS]\n\n"                                                              \
-    "OPTIONS:\n"                                                                             \
-    "  -h, --help      Show this help message\n"                                             \
-    "  -r, --root      Where the served files are (default: current working directory)\n"    \
-    "  -p, --port      Which port to listen on    (default: 18180)\n"                        \
-    "  -v, --verbose   Enable debug log\n"                                                   \
-    "  -t, --timeout   Inactive socket timeout (after connected) in seconds (default: 60)\n"
+#define HELP_TEXT                                                                                  \
+    "Usage: tfos [OPTIONS]\n\n"                                                                    \
+    "OPTIONS:\n"                                                                                   \
+    "  -h, --help            Show this help message\n"                                             \
+    "  -r, --root            Where the served files are (default: current working directory)\n"    \
+    "  -p, --port            Which port to listen on    (default: 18180)\n"                        \
+    "  -v, --verbose         Enable debug log\n"                                                   \
+    "  -t, --timeout         Inactive socket timeout (after connected) in seconds (default: 60)\n" \
+    "  -c, --max-connections Maximum number of concurrent connections (default: 10)\n"
 
 static std::string EMPTY;
 
@@ -26,6 +27,7 @@ static std::filesystem::path root_dir;
 static int port;
 static bool enable_debug_log = false;
 static std::chrono::seconds socket_timeout;
+static int max_connections;
 
 namespace
 {
@@ -102,6 +104,10 @@ static void parse_cmd_args(const int argc, char** argv)
     std::string socket_timeout_str;
     ASSIGN_OPTION("-t", "--timeout", socket_timeout_str, "60");
     socket_timeout = std::chrono::seconds(std::stoi(socket_timeout_str));
+
+    std::string max_connections_str;
+    ASSIGN_OPTION("-c", "--max-connections", max_connections_str, "10");
+    max_connections = std::stoi(max_connections_str);
 }
 
 int main(const int argc, char** argv) // NOLINT(*-exception-escape)
@@ -113,7 +119,7 @@ int main(const int argc, char** argv) // NOLINT(*-exception-escape)
     if (enable_debug_log)
         spdlog::set_level(spdlog::level::debug);
 
-    std::jthread tcp_server_thread(tcp_server::tcp_server_thread, port);
+    std::jthread tcp_server_thread(tcp_server::tcp_server_thread, port, max_connections);
 
     SPDLOG_DEBUG("Log format: [time] level thread-id source-file-and-line: message");
     SPDLOG_INFO("Successfully initialized");

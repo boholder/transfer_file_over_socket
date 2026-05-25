@@ -50,7 +50,7 @@ static void socket_thread(sockpp::tcp_socket socket, const std::string& peer)
     }
 }
 
-static void tcp_server_thread(const int port)
+static void tcp_server_thread(const int port, const int max_connections)
 {
     sockpp::initialize();
 
@@ -68,6 +68,19 @@ static void tcp_server_thread(const int port)
 
     while (true)
     {
+        static bool warn_once = true;
+        if (socket_threads.size() >= max_connections)
+        {
+            if (warn_once)
+            {
+                SPDLOG_WARN("Maximum number of connections ({}) reached, waiting for a connection to close", max_connections);
+                warn_once = false;
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            continue;
+        }
+        warn_once = true;
+
         // waiting for a new client connection
         sockpp::inet_address peer;
         if (auto conn_result = server.accept(TCP_SERVER_TIMEOUT, &peer); !conn_result)
