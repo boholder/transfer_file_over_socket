@@ -18,48 +18,48 @@
     "OPTIONS:\n"                                     \
     "  -h, --help      Show this help message\n"     \
     "  -r, --root      Where the served files are\n" \
-    "  -p, --port      Will listen on this port\n"
+    "  -p, --port      Will listen on this port\n"   \
+    "  -v, --verbose   Enable debug log\n"
 
 static std::string EMPTY;
 
 // options
 static std::filesystem::path root_dir;
 static int port;
+static bool enable_debug_log = false;
 
 namespace
 {
-    /**
-     * ref: https://stackoverflow.com/a/868894/23093084
-     *
-     * @author iain
-     */
-    class InputParser
+/**
+ * ref: https://stackoverflow.com/a/868894/23093084
+ *
+ * @author iain
+ */
+class InputParser
+{
+public:
+    InputParser(const int& argc, char** argv)
     {
-    public:
-        InputParser(const int& argc, char** argv)
-        {
-            for (int i = 1; i < argc; ++i)
-                this->tokens.emplace_back(argv[i]);
-        }
+        for (int i = 1; i < argc; ++i)
+            this->tokens.emplace_back(argv[i]);
+    }
 
-        [[nodiscard]] const std::string& getCmdOption(const std::string& option) const
+    [[nodiscard]] const std::string& getCmdOption(const std::string& option) const
+    {
+        if (auto itr = std::ranges::find(this->tokens, option);
+            itr != this->tokens.end() && ++itr != this->tokens.end()) // NOLINT(*-inc-dec-in-conditions)
         {
-            if (auto itr = std::ranges::find(this->tokens, option);
-                itr != this->tokens.end() && ++itr != this->tokens.end()) // NOLINT(*-inc-dec-in-conditions)
-            {
-                return *itr;
-            }
-            return EMPTY;
+            return *itr;
         }
+        return EMPTY;
+    }
 
-        [[nodiscard]] bool cmdOptionExists(const std::string& option) const
-        {
-            return std::ranges::find(this->tokens, option) != this->tokens.end();
-        }
+    [[nodiscard]] bool cmdOptionExists(const std::string& option) const
+    { return std::ranges::find(this->tokens, option) != this->tokens.end(); }
 
-    private:
-        std::vector<std::string> tokens;
-    };
+private:
+    std::vector<std::string> tokens;
+};
 } // namespace
 
 static void parse_cmd_args(const int argc, char** argv)
@@ -96,14 +96,19 @@ static void parse_cmd_args(const int argc, char** argv)
     std::string port_str;
     ASSIGN_OPTION("-p", "--port", port_str, "18180");
     port = std::stoi(port_str);
+
+    if (OPTION_PASSED("-v", "--verbose"))
+        enable_debug_log = true;
 }
 
 int main(const int argc, char** argv) // NOLINT(*-exception-escape)
 {
     spdlog::set_pattern(LOG_PATTERN);
-    spdlog::set_level(spdlog::level::debug);
 
     parse_cmd_args(argc, argv);
+
+    if (enable_debug_log)
+        spdlog::set_level(spdlog::level::debug);
 
     SPDLOG_INFO("Successfully initialized");
     SPDLOG_DEBUG("root: {}", root_dir.string());
