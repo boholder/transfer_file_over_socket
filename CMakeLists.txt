@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(tfos
         src/main.cpp
+        src/constant.h
+        src/tcp_server.h
 )
 
 target_compile_features(tfos PUBLIC cxx_std_23)
