@@ -12,9 +12,14 @@
 namespace tcp_server
 {
 
-static void socket_thread(sockpp::tcp_socket socket, const std::string& peer)
+// options
+static int port;
+static std::chrono::seconds socket_timeout;
+static int max_connections;
+
+static void socket_thread(sockpp::tcp_socket socket, const std::string& peer, const std::chrono::seconds sock_timeout)
 {
-    socket.read_timeout(TCP_SOCKET_TIMEOUT);
+    socket.read_timeout(sock_timeout);
 
     char buf[TCP_SERVER_BUFFER_SIZE];
     auto* const begin = reinterpret_cast<char*>(&buf);
@@ -50,7 +55,7 @@ static void socket_thread(sockpp::tcp_socket socket, const std::string& peer)
     }
 }
 
-static void tcp_server_thread(const int port, const int max_connections)
+static void tcp_server_thread()
 {
     sockpp::initialize();
 
@@ -96,7 +101,7 @@ static void tcp_server_thread(const int port, const int max_connections)
             auto peer_addr = peer.to_string();
             SPDLOG_INFO("Accept connection with [{}]", peer_addr);
             // start another sub thread to handle the socket
-            socket_threads.emplace_back(tcp_server::socket_thread, conn_result.release(), peer_addr);
+            socket_threads.emplace_back(socket_thread, conn_result.release(), peer_addr, socket_timeout);
         }
     }
 }

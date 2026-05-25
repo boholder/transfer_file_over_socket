@@ -8,6 +8,7 @@ add_executable(tfos
         src/main.cpp
         src/constant.h
         src/tcp_server.h
+        src/file_getter.h
 )
 
 target_compile_features(tfos PUBLIC cxx_std_23)

@@ -8,6 +8,7 @@
 #include <spdlog/spdlog.h>
 
 #include "constant.h"
+#include "file_getter.h"
 #include "tcp_server.h"
 #define HELP_TEXT                                                                                  \
     "Usage: tfos [OPTIONS]\n\n"                                                                    \
@@ -22,11 +23,7 @@
 static std::string EMPTY;
 
 // options
-static std::filesystem::path root_dir;
-static int port;
 static bool enable_debug_log = false;
-static std::chrono::seconds socket_timeout;
-static int max_connections;
 
 namespace
 {
@@ -62,6 +59,9 @@ private:
 };
 } // namespace
 
+/**
+ * Contains default option values assignment logic
+ */
 static void parse_cmd_args(const int argc, char** argv)
 {
     const InputParser input(argc, argv);
@@ -91,22 +91,22 @@ static void parse_cmd_args(const int argc, char** argv)
         exit(0); // NOLINT(*-mt-unsafe)
     }
 
-    ASSIGN_OPTION("-r", "--root", root_dir, std::filesystem::current_path());
+    ASSIGN_OPTION("-r", "--root", file_getter::root_dir, std::filesystem::current_path());
 
     std::string port_str;
     ASSIGN_OPTION("-p", "--port", port_str, "18180");
-    port = std::stoi(port_str);
+    tcp_server::port = std::stoi(port_str);
 
     if (OPTION_PASSED("-v", "--verbose"))
         enable_debug_log = true;
 
     std::string socket_timeout_str;
     ASSIGN_OPTION("-t", "--timeout", socket_timeout_str, "60");
-    socket_timeout = std::chrono::seconds(std::stoi(socket_timeout_str));
+    tcp_server::socket_timeout = std::chrono::seconds(std::stoi(socket_timeout_str));
 
     std::string max_connections_str;
     ASSIGN_OPTION("-c", "--max-connections", max_connections_str, "10");
-    max_connections = std::stoi(max_connections_str);
+    tcp_server::max_connections = std::stoi(max_connections_str);
 }
 
 int main(const int argc, char** argv) // NOLINT(*-exception-escape)
@@ -118,7 +118,7 @@ int main(const int argc, char** argv) // NOLINT(*-exception-escape)
     if (enable_debug_log)
         spdlog::set_level(spdlog::level::debug);
 
-    std::jthread tcp_server_thread(tcp_server::tcp_server_thread, port, max_connections);
+    std::jthread tcp_server_thread(tcp_server::tcp_server_thread);
 
     SPDLOG_DEBUG("Log format: [time] level thread-id source-file-and-line: message");
     SPDLOG_INFO("Successfully initialized");
