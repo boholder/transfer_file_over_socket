@@ -37,6 +37,6 @@ cmake-build*
 build
 
 # Third party libraries
-3rdparty/**
-!3rdparty/
-!3rdparty/CMakeLists.txt
+third/**
+!third/
+!third/CMakeLists.txt
