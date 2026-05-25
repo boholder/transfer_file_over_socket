@@ -10,13 +10,14 @@
 #include "constant.h"
 #include "tcp_server.h"
 
-#define HELP_TEXT                                                                         \
-    "Usage: tfos [OPTIONS]\n\n"                                                           \
-    "OPTIONS:\n"                                                                          \
-    "  -h, --help      Show this help message\n"                                          \
-    "  -r, --root      Where the served files are (default: current working directory)\n" \
-    "  -p, --port      Which port to listen on    (default: 18180)\n"                     \
-    "  -v, --verbose   Enable debug log\n"
+#define HELP_TEXT                                                                            \
+    "Usage: tfos [OPTIONS]\n\n"                                                              \
+    "OPTIONS:\n"                                                                             \
+    "  -h, --help      Show this help message\n"                                             \
+    "  -r, --root      Where the served files are (default: current working directory)\n"    \
+    "  -p, --port      Which port to listen on    (default: 18180)\n"                        \
+    "  -v, --verbose   Enable debug log\n"                                                   \
+    "  -t, --timeout   Inactive socket timeout (after connected) in seconds (default: 60)\n"
 
 static std::string EMPTY;
 
@@ -24,6 +25,7 @@ static std::string EMPTY;
 static std::filesystem::path root_dir;
 static int port;
 static bool enable_debug_log = false;
+static std::chrono::seconds socket_timeout;
 
 namespace
 {
@@ -96,6 +98,10 @@ static void parse_cmd_args(const int argc, char** argv)
 
     if (OPTION_PASSED("-v", "--verbose"))
         enable_debug_log = true;
+
+    std::string socket_timeout_str;
+    ASSIGN_OPTION("-t", "--timeout", socket_timeout_str, "60");
+    socket_timeout = std::chrono::seconds(std::stoi(socket_timeout_str));
 }
 
 int main(const int argc, char** argv) // NOLINT(*-exception-escape)
@@ -111,6 +117,4 @@ int main(const int argc, char** argv) // NOLINT(*-exception-escape)
 
     SPDLOG_DEBUG("Log format: [time] level thread-id source-file-and-line: message");
     SPDLOG_INFO("Successfully initialized");
-    SPDLOG_DEBUG("root: {}", root_dir.string());
-    SPDLOG_DEBUG("port: {}", port);
 }
