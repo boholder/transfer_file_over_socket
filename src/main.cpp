@@ -10,14 +10,14 @@
 #include "constant.h"
 #include "file_getter.h"
 #include "tcp_server.h"
-#define HELP_TEXT                                                                                  \
-    "Usage: tfos [OPTIONS]\n\n"                                                                    \
-    "OPTIONS:\n"                                                                                   \
-    "  -r, --root            Where the served files are (default: current working directory)\n"    \
-    "  -p, --port            Which port to listen on    (default: 18180)\n"                        \
-    "  -t, --timeout         Inactive socket timeout (after connected) in seconds (default: 60)\n" \
-    "  -c, --max-connections Maximum number of concurrent connections (default: 10)\n"             \
-    "  -h, --help            Show this help message\n"                                             \
+#define HELP_TEXT                                                                                                      \
+    "Usage: tfos [OPTIONS]\n\n"                                                                                        \
+    "OPTIONS:\n"                                                                                                       \
+    "  -f, --file            Served file(s) path, can be a directory or a file (default: current working directory)\n" \
+    "  -p, --port            Which port to listen on    (default: 18180)\n"                                            \
+    "  -t, --timeout         Inactive socket timeout (after connected) in seconds (default: 60)\n"                     \
+    "  -c, --max-connections Maximum number of concurrent connections (default: 10)\n"                                 \
+    "  -h, --help            Show this help message\n"                                                                 \
     "  -v, --verbose         Enable debug log\n"
 
 static std::string EMPTY;
@@ -91,7 +91,15 @@ static void parse_cmd_args(const int argc, char** argv)
         exit(0); // NOLINT(*-mt-unsafe)
     }
 
-    ASSIGN_OPTION("-r", "--root", file_getter::root_dir, std::filesystem::current_path());
+    ASSIGN_OPTION("-f", "--file", file_getter::root_dir, std::filesystem::current_path());
+    if (!std::filesystem::exists(file_getter::root_dir))
+    {
+        SPDLOG_ERROR("File / path [{}] does not exist, exit", file_getter::root_dir.string());
+        std::cerr << "File / path [" << file_getter::root_dir << "] does not exist, exit";
+        exit(1);
+    }
+    if (!std::filesystem::is_directory(file_getter::root_dir))
+        file_getter::single_file_mode = true;
 
     std::string port_str;
     ASSIGN_OPTION("-p", "--port", port_str, "18180");
