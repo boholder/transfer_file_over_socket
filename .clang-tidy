@@ -1,0 +1,254 @@
+---
+Checks:          '*,
+    -altera-unroll-loops,
+    -cert-err58-cpp,
+    -cppcoreguidelines-pro-bounds-avoid-unchecked-container-access,
+    -cppcoreguidelines-macro-usage,
+    -cppcoreguidelines-avoid-c-arrays,
+    -hicpp-avoid-c-arrays,
+    -modernize-avoid-c-arrays,
+    -cppcoreguidelines-avoid-magic-numbers,
+    -readability-magic-numbers,
+    -cppcoreguidelines-owning-memory,
+    -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+    -cppcoreguidelines-pro-bounds-constant-array-index,
+    -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+    -cppcoreguidelines-pro-type-member-init,
+    -cppcoreguidelines-pro-type-reinterpret-cast,
+    -cppcoreguidelines-pro-type-vararg,
+    -cppcoreguidelines-special-member-functions,
+    -cppcoreguidelines-avoid-non-const-global-variables,
+    -fuchsia-default-arguments,
+    -fuchsia-default-arguments-calls,
+    -fuchsia-statically-constructed-objects,
+    -google-default-arguments,
+    -google-explicit-constructor,
+    -google-readability-braces-around-statements,
+    -google-readability-todo,
+    -google-runtime-int,
+    -google-runtime-references,
+    -hicpp-braces-around-statements,
+    -hicpp-explicit-conversions,
+    -hicpp-member-init,
+    -hicpp-no-array-decay,
+    -hicpp-signed-bitwise,
+    -hicpp-special-member-functions,
+    -hicpp-use-auto,
+    -hicpp-use-equals-default,
+    -hicpp-use-override,
+    -hicpp-vararg,
+    -llvm-header-guard,
+    -llvm-include-order,
+    -llvmlibc-*,
+    -bugprone-throwing-static-initialization,
+    -misc-string-compare,
+    -misc-unused-using-decls,
+    -misc-use-anonymous-namespace,
+    -misc-non-private-member-variables-in-classes,
+    -modernize-loop-convert,
+    -modernize-make-unique,
+    -modernize-use-auto,
+    -modernize-use-equals-default,
+    -modernize-use-override,
+    -modernize-use-using,
+    -modernize-use-trailing-return-type,
+    -performance-for-range-copy,
+    -performance-unnecessary-value-param,
+    -readability-avoid-const-params-in-decls,
+    -readability-braces-around-statements,
+    -readability-else-after-return,
+    -readability-implicit-bool-conversion,
+    -readability-inconsistent-declaration-parameter-name,
+    -readability-non-const-parameter,
+    -readability-string-compare,
+    -readability-redundant-declaration,
+    -readability-redundant-member-init,
+    -readability-static-accessed-through-instance'
+WarningsAsErrors:           '*,
+    -cert-err58-cpp,
+    -cppcoreguidelines-avoid-c-arrays,
+    -hicpp-avoid-c-arrays,
+    -modernize-avoid-c-arrays,
+    -cppcoreguidelines-owning-memory,
+    -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+    -cppcoreguidelines-pro-bounds-constant-array-index,
+    -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+    -cppcoreguidelines-pro-type-member-init,
+    -cppcoreguidelines-pro-type-reinterpret-cast,
+    -cppcoreguidelines-pro-type-vararg,
+    -cppcoreguidelines-special-member-functions,
+    -fuchsia-default-arguments,
+    -fuchsia-trailing-return,
+    -google-default-arguments,
+    -google-explicit-constructor,
+    -google-readability-braces-around-statements,
+    -google-readability-todo,
+    -google-runtime-int,
+    -google-runtime-references,
+    -hicpp-braces-around-statements,
+    -hicpp-explicit-conversions,
+    -hicpp-member-init,
+    -hicpp-no-array-decay,
+    -hicpp-signed-bitwise,
+    -hicpp-special-member-functions,
+    -hicpp-use-auto,
+    -hicpp-use-equals-default,
+    -hicpp-use-override,
+    -hicpp-vararg,
+    -llvm-header-guard,
+    -llvm-include-order,
+    -misc-string-compare,
+    -misc-unused-using-decls,
+    -modernize-loop-convert,
+    -modernize-make-unique,
+    -modernize-use-auto,
+    -modernize-use-equals-default,
+    -modernize-use-override,
+    -modernize-use-using,
+    -performance-for-range-copy,
+    -performance-unnecessary-value-param,
+    -readability-avoid-const-params-in-decls,
+    -readability-braces-around-statements,
+    -readability-else-after-return,
+    -readability-implicit-bool-conversion,
+    -readability-inconsistent-declaration-parameter-name,
+    -readability-non-const-parameter,
+    -readability-redundant-declaration,
+    -readability-redundant-member-init,
+    -readability-static-accessed-through-instance'
+HeaderFilterRegex: '^((?!qt).)*h$'
+FormatStyle:     none
+CheckOptions:
+  bugprone-argument-comment.StrictMode: false
+  bugprone-assert-side-effect.AssertMacros: assert
+  bugprone-assert-side-effect.CheckFunctionCalls: false
+  bugprone-dangling-handle.HandleClasses: 'std::basic_string_view;std::experimental::basic_string_view'
+  bugprone-string-constructor.LargeLengthThreshold: 8388608
+  bugprone-string-constructor.WarnOnLargeLength: true
+  cert-dcl59-cpp.HeaderFileExtensions: ',h,hh,hpp,hxx'
+  cert-err09-cpp.CheckThrowTemporaries: true
+  cert-err61-cpp.CheckThrowTemporaries: true
+  cert-oop11-cpp.IncludeStyle: llvm
+  cppcoreguidelines-no-malloc.Allocations: '::malloc;::calloc'
+  cppcoreguidelines-no-malloc.Deallocations: '::free'
+  cppcoreguidelines-no-malloc.Reallocations: '::realloc'
+  cppcoreguidelines-owning-memory.LegacyResourceConsumers: '::free;::realloc;::freopen;::fclose'
+  cppcoreguidelines-owning-memory.LegacyResourceProducers: '::malloc;::aligned_alloc;::realloc;::calloc;::fopen;::freopen;::tmpfile'
+  cppcoreguidelines-pro-bounds-constant-array-index.GslHeader: ''
+  cppcoreguidelines-pro-bounds-constant-array-index.IncludeStyle: llvm
+  cppcoreguidelines-pro-type-member-init.IgnoreArrays: false
+  cppcoreguidelines-special-member-functions.AllowMissingMoveFunctions: false
+  cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor: false
+  google-build-namespaces.HeaderFileExtensions: ',h,hh,hpp,hxx'
+  google-global-names-in-headers.HeaderFileExtensions: ',h,hh,hpp,hxx'
+  google-readability-braces-around-statements.ShortStatementLines: true
+  google-readability-function-size.BranchThreshold: '4294967295'
+  google-readability-function-size.LineThreshold: '4294967295'
+  google-readability-function-size.NestingThreshold: '4294967295'
+  google-readability-function-size.ParameterThreshold: '4294967295'
+  google-readability-function-size.StatementThreshold: '800'
+  google-readability-namespace-comments.ShortNamespaceLines: '10'
+  google-readability-namespace-comments.SpacesBeforeComments: '2'
+  google-runtime-int.SignedTypePrefix: int
+  google-runtime-int.TypeSuffix: ''
+  google-runtime-int.UnsignedTypePrefix: uint
+  google-runtime-references.WhiteListTypes: ''
+  hicpp-braces-around-statements.ShortStatementLines: false
+  hicpp-function-size.BranchThreshold: '4294967295'
+  hicpp-function-size.LineThreshold: '4294967295'
+  hicpp-function-size.NestingThreshold: '4294967295'
+  hicpp-function-size.ParameterThreshold: '4294967295'
+  hicpp-function-size.StatementThreshold: '800'
+  hicpp-member-init.IgnoreArrays: false
+  hicpp-move-const-arg.CheckTriviallyCopyableMove: true
+  hicpp-named-parameter.IgnoreFailedSplit: false
+  hicpp-no-malloc.Allocations: '::malloc;::calloc'
+  hicpp-no-malloc.Deallocations: '::free'
+  hicpp-no-malloc.Reallocations: '::realloc'
+  hicpp-special-member-functions.AllowMissingMoveFunctions: false
+  hicpp-special-member-functions.AllowSoleDefaultDtor: false
+  hicpp-use-auto.RemoveStars: false
+  hicpp-use-emplace.ContainersWithPushBack: '::std::vector;::std::list;::std::deque'
+  hicpp-use-emplace.SmartPointers: '::std::shared_ptr;::std::unique_ptr;::std::auto_ptr;::std::weak_ptr'
+  hicpp-use-emplace.TupleMakeFunctions: '::std::make_pair;::std::make_tuple'
+  hicpp-use-emplace.TupleTypes: '::std::pair;::std::tuple'
+  hicpp-use-equals-default.IgnoreMacros: true
+  hicpp-use-noexcept.ReplacementString: ''
+  hicpp-use-noexcept.UseNoexceptFalse: true
+  hicpp-use-nullptr.NullMacros: ''
+  llvm-namespace-comment.ShortNamespaceLines: 1
+  llvm-namespace-comment.SpacesBeforeComments: 1
+  misc-definitions-in-headers.HeaderFileExtensions: ',h,hh,hpp,hxx'
+  misc-definitions-in-headers.UseHeaderFileExtension: true
+  misc-misplaced-widening-cast.CheckImplicitCasts: false
+  misc-sizeof-expression.WarnOnSizeOfCompareToConstant: true
+  misc-sizeof-expression.WarnOnSizeOfConstant: true
+  misc-sizeof-expression.WarnOnSizeOfThis: true
+  misc-suspicious-enum-usage.StrictMode: false
+  misc-suspicious-missing-comma.MaxConcatenatedTokens: '5'
+  misc-suspicious-missing-comma.RatioThreshold: '0.200000'
+  misc-suspicious-missing-comma.SizeThreshold: '5'
+  misc-suspicious-string-compare.StringCompareLikeFunctions: ''
+  misc-suspicious-string-compare.WarnOnImplicitComparison: true
+  misc-suspicious-string-compare.WarnOnLogicalNotComparison: false
+  misc-throw-by-value-catch-by-reference.CheckThrowTemporaries: true
+  misc-include-cleaner.MissingIncludes: false
+  modernize-loop-convert.MaxCopySize: '16'
+  modernize-loop-convert.MinConfidence: reasonable
+  modernize-loop-convert.NamingStyle: CamelCase
+  modernize-make-shared.IgnoreMacros: true
+  modernize-make-shared.IncludeStyle: llvm
+  modernize-make-shared.MakeSmartPtrFunction: 'std::make_shared'
+  modernize-make-shared.MakeSmartPtrFunctionHeader: memory
+  modernize-make-unique.IgnoreMacros: true
+  modernize-make-unique.IncludeStyle: llvm
+  modernize-make-unique.MakeSmartPtrFunction: 'std::make_unique'
+  modernize-make-unique.MakeSmartPtrFunctionHeader: memory
+  modernize-pass-by-value.IncludeStyle: llvm
+  modernize-pass-by-value.ValuesOnly: false
+  modernize-raw-string-literal.ReplaceShorterLiterals: false
+  modernize-replace-auto-ptr.IncludeStyle: llvm
+  modernize-replace-random-shuffle.IncludeStyle: llvm
+  modernize-use-auto.RemoveStars: false
+  modernize-use-default-member-init.IgnoreMacros: true
+  modernize-use-default-member-init.UseAssignment: false
+  modernize-use-emplace.ContainersWithPushBack: '::std::vector;::std::list;::std::deque'
+  modernize-use-emplace.SmartPointers: '::std::shared_ptr;::std::unique_ptr;::std::auto_ptr;::std::weak_ptr'
+  modernize-use-emplace.TupleMakeFunctions: '::std::make_pair;::std::make_tuple'
+  modernize-use-emplace.TupleTypes: '::std::pair;::std::tuple'
+  modernize-use-equals-default.IgnoreMacros: true
+  modernize-use-noexcept.ReplacementString: ''
+  modernize-use-noexcept.UseNoexceptFalse: true
+  modernize-use-nullptr.NullMacros: 'NULL'
+  modernize-use-transparent-functors.SafeMode: false
+  modernize-use-using.IgnoreMacros: true
+  objc-forbidden-subclassing.ForbiddenSuperClassNames: 'ABNewPersonViewController;ABPeoplePickerNavigationController;ABPersonViewController;ABUnknownPersonViewController;NSHashTable;NSMapTable;NSPointerArray;NSPointerFunctions;NSTimer;UIActionSheet;UIAlertView;UIImagePickerController;UITextInputMode;UIWebView'
+  objc-property-declaration.Acronyms: 'ASCII;PDF;XML;HTML;URL;RTF;HTTP;TIFF;JPG;PNG;GIF;LZW;ROM;RGB;CMYK;MIDI;FTP'
+  performance-faster-string-find.StringLikeClasses: 'std::basic_string'
+  performance-for-range-copy.WarnOnAllAutoCopies: false
+  performance-inefficient-string-concatenation.StrictMode: false
+  performance-inefficient-vector-operation.VectorLikeClasses: '::std::vector'
+  performance-move-const-arg.CheckTriviallyCopyableMove: true
+  performance-move-constructor-init.IncludeStyle: llvm
+  performance-type-promotion-in-math-fn.IncludeStyle: llvm
+  performance-unnecessary-value-param.IncludeStyle: llvm
+  readability-braces-around-statements.ShortStatementLines: 0
+  readability-function-size.BranchThreshold: 4294967295
+  readability-function-size.LineThreshold: 4294967295
+  readability-function-size.NestingThreshold: 4294967295
+  readability-function-size.ParameterThreshold: 4294967295
+  readability-function-size.StatementThreshold: 800
+  readability-identifier-naming.IgnoreFailedSplit: false
+  readability-identifier-length.MinimumExceptionNameLength: 1
+  readability-identifier-length.MinimumLoopCounterNameLength: 1
+  readability-identifier-length.MinimumObjectPointerNameLength: 1
+  readability-identifier-length.MinimumParameterNameLength: 1
+  readability-identifier-length.MinimumVariableNameLength: 1
+  readability-implicit-bool-conversion.AllowIntegerConditions: false
+  readability-implicit-bool-conversion.AllowPointerConditions: false
+  readability-simplify-boolean-expr.ChainedConditionalAssignment: false
+  readability-simplify-boolean-expr.ChainedConditionalReturn: false
+  readability-static-accessed-through-instance.NameSpecifierNestingThreshold: '3'
+  readability-magic-numbers.IgnoreAllFloatingPointValues: true
+  readability-magic-numbers.IgnoreUserDefinedLiterals: true
+...
