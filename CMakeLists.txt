@@ -18,3 +18,10 @@ target_link_libraries(tfos
         spdlog::spdlog
         Sockpp::sockpp
 )
+
+add_custom_command(
+        TARGET tfos POST_BUILD
+        COMMENT "Copying DLLs"
+        COMMAND ${CMAKE_COMMAND} -E copy -t $<TARGET_FILE_DIR:tfos> $<TARGET_RUNTIME_DLLS:tfos>
+        COMMAND_EXPAND_LISTS
+)

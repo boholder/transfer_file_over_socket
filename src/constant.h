@@ -8,5 +8,5 @@
 #define LOG_PATTERN "%^[%C-%m-%d %T.%e] %L %-5t %-8!s:%-4#: %v%$"
 
 #define TCP_SERVER_TIMEOUT std::chrono::seconds(60)
-#define TCP_SOCKET_TIMEOUT std::chrono::seconds(3)
+#define TCP_SOCKET_TIMEOUT std::chrono::seconds(60)
 #define TCP_SERVER_BUFFER_SIZE 10240

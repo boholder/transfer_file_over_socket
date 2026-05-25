@@ -2,11 +2,13 @@
 #include <vector>
 #include <string>
 #include <filesystem>
+#include <thread>
 
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG
 #include <spdlog/spdlog.h>
 
 #include "constant.h"
+#include "tcp_server.h"
 
 #define HELP_TEXT                                                                         \
     "Usage: tfos [OPTIONS]\n\n"                                                           \
@@ -105,6 +107,9 @@ int main(const int argc, char** argv) // NOLINT(*-exception-escape)
     if (enable_debug_log)
         spdlog::set_level(spdlog::level::debug);
 
+    std::jthread tcp_server_thread(tcp_server::tcp_server_thread, port);
+
+    SPDLOG_DEBUG("Log format: [time] level thread-id source-file-and-line: message");
     SPDLOG_INFO("Successfully initialized");
     SPDLOG_DEBUG("root: {}", root_dir.string());
     SPDLOG_DEBUG("port: {}", port);
