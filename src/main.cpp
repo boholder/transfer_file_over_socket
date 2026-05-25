@@ -13,12 +13,12 @@
 // ref: https://github.com/gabime/spdlog/wiki/Custom-formatting
 #define LOG_PATTERN "%^[%C-%m-%d %T.%e] %L %-5t %-8!s:%-4#: %v%$"
 
-#define HELP_TEXT                                    \
-    "Usage: tfos [OPTIONS]\n\n"                      \
-    "OPTIONS:\n"                                     \
-    "  -h, --help      Show this help message\n"     \
-    "  -r, --root      Where the served files are\n" \
-    "  -p, --port      Will listen on this port\n"   \
+#define HELP_TEXT                                                                         \
+    "Usage: tfos [OPTIONS]\n\n"                                                           \
+    "OPTIONS:\n"                                                                          \
+    "  -h, --help      Show this help message\n"                                          \
+    "  -r, --root      Where the served files are (default: current working directory)\n" \
+    "  -p, --port      Which port to listen on    (default: 18180)\n"                     \
     "  -v, --verbose   Enable debug log\n"
 
 static std::string EMPTY;
