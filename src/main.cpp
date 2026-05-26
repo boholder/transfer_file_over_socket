@@ -62,7 +62,7 @@ private:
 /**
  * Contains default option values assignment logic
  */
-static void parse_cmd_args(const int argc, char** argv)
+static void parse_cmd_args(const int argc, char** argv) // NOLINT(*-function-cognitive-complexity)
 {
     const InputParser input(argc, argv);
     std::string option;
@@ -96,7 +96,7 @@ static void parse_cmd_args(const int argc, char** argv)
     {
         SPDLOG_ERROR("File / path [{}] does not exist, exit", file_getter::root_dir.string());
         std::cerr << "File / path [" << file_getter::root_dir << "] does not exist, exit";
-        exit(1);
+        exit(1); // NOLINT(*-mt-unsafe)
     }
     if (!std::filesystem::is_directory(file_getter::root_dir))
         file_getter::single_file_mode = true;
@@ -126,7 +126,7 @@ int main(const int argc, char** argv) // NOLINT(*-exception-escape)
     if (enable_debug_log)
         spdlog::set_level(spdlog::level::debug);
 
-    std::jthread tcp_server_thread(tcp_server::tcp_server_thread);
+    const std::jthread tcp_server_thread(tcp_server::tcp_server_thread);
 
     SPDLOG_DEBUG("Log format: [time] level thread-id source-file-and-line: message");
     SPDLOG_INFO("Successfully initialized");
