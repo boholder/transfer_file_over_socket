@@ -22,6 +22,23 @@ protected:
         memset(buffer, 0, sizeof(buffer));
     }
 
+    /**
+     * @return output file path
+     */
+    std::filesystem::path copy_file_via_file_getter(const std::string& file_name)
+    {
+        const auto out_file = file_getter::root_dir / (file_name + ".out");
+        auto getter = file_getter::build_getter(file_name.c_str(), buffer, sizeof(buffer));
+        long long count = 0;
+        std::ofstream ofs(out_file, std::ios::binary);
+        do // NOLINT(*-avoid-do-while)
+        {
+            count = getter();
+            ofs.write(buffer, count);
+        } while (count != 0);
+        return out_file;
+    }
+
     static std::string calc_sha256(const std::filesystem::path& file)
     {
         const std::string sha_file = file.string().append(".sha");
@@ -30,7 +47,7 @@ protected:
         std::system( // NOLINT(*-command-processor, *-env33-c, *-mt-unsafe)
             ("powershell -Command \"(Get-FileHash " + file.string() + ").Hash\" > " + sha_file).c_str());
 #elifdef __linux__
-        std::system(("sha256sum " + file.string() + "> " + sha_file).c_str()); // NOLINT(*-command-processor)
+        std::system(("sha256sum -b " + file.string() + " | cut -d' ' -f1 > " + sha_file).c_str()); // NOLINT(*-command-processor)
 #endif
 
         char b[65];
@@ -39,7 +56,9 @@ protected:
             ifs.getline(b, 65);
         }
         std::filesystem::remove(sha_file);
-        return {b};
+        std::string str = {b};
+        std::ranges::transform(str, str.begin(), toupper);
+        return str;
     }
 };
 
@@ -75,20 +94,14 @@ TEST_F(TestFileGetter, single_file_mode)
 
 TEST_F(TestFileGetter, text_file)
 {
-    const auto* const out_file = TEST_RESOURCES_DIR "/text_file.out";
+    const auto out_path = copy_file_via_file_getter("the_little_prince.txt");
+    ASSERT_EQ("7FA80B27F53782ABA750F3730ED3431270D79F9F7CD9FFDBA3B65C9843FEA670", calc_sha256(out_path));
+}
 
-    {
-        auto getter = file_getter::build_getter("the_little_prince.txt", buffer, sizeof(buffer));
-        long long count = 0;
-        std::ofstream ofs(out_file, std::ios::binary);
-        do // NOLINT(*-avoid-do-while)
-        {
-            count = getter();
-            ofs.write(buffer, count);
-        } while (count != 0);
-    }
-
-    ASSERT_EQ("7FA80B27F53782ABA750F3730ED3431270D79F9F7CD9FFDBA3B65C9843FEA670", calc_sha256(out_file));
+TEST_F(TestFileGetter, binary_file)
+{
+    const auto out_path = copy_file_via_file_getter("cat");
+    ASSERT_EQ("A63158E6E5BCE20616425F5D61E5BD7374BB5BCCF15BBB93AE2E40238248F179", calc_sha256(out_path));
 }
 
 } // namespace
