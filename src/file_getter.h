@@ -14,20 +14,22 @@ namespace file_getter
 static std::filesystem::path root_dir;
 static bool single_file_mode = false;
 
-static std::move_only_function<bool()> build_getter(const char file_name[], char* buffer, const int buf_size)
+/**
+ * @return a function that, reads bytes from file into <buffer> and returns the number of read bytes, at every invocation
+ */
+static std::move_only_function<long long()> build_getter(const char file_name[], char* buffer, const long long buf_size)
 {
-    const auto p = single_file_mode ? root_dir : root_dir / file_name;
-    if (std::filesystem::exists(p))
+    if (const auto p = single_file_mode ? root_dir : root_dir / file_name; std::filesystem::exists(p))
     {
         try
         {
             std::ifstream fs(p, std::ios::binary);
-            return [fs = std::move(fs), file_name, buffer, buf_size] mutable // NOLINT(*-exception-escape)
+            return [fs = std::move(fs), file_name, buffer, buf_size] mutable -> long long // NOLINT(*-exception-escape)
             {
                 try
                 {
                     fs.read(buffer, buf_size);
-
+                    return fs.gcount();
                 }
                 catch (const std::exception& e)
                 {
@@ -35,9 +37,8 @@ static std::move_only_function<bool()> build_getter(const char file_name[], char
                                  file_name,
                                  e.what(),
                                  std::to_string(std::stacktrace::current()));
-                    return true; // stop further reading
+                    return 0; // stop further reading
                 }
-                return fs.eof();
             };
         }
         catch (const std::exception& e)
@@ -46,7 +47,7 @@ static std::move_only_function<bool()> build_getter(const char file_name[], char
         }
     }
 
-    return [] { return true; };
+    return [] { return 0; };
 }
 
 } // namespace file_getter

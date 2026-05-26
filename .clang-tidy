@@ -1,6 +1,7 @@
 ---
 Checks:          '*,
     -altera-unroll-loops,
+    -altera-id-dependent-backward-branch,
     -cert-err58-cpp,
     -cppcoreguidelines-pro-bounds-avoid-unchecked-container-access,
     -cppcoreguidelines-macro-usage,
