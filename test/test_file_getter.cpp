@@ -19,7 +19,7 @@ protected:
     {
         file_getter::root_dir = std::filesystem::current_path() / TEST_RESOURCES_DIR;
         file_getter::single_file_mode = false;
-        memset(buffer, 0, sizeof(buffer));
+        std::fill_n(buffer, sizeof(buffer), 0);
     }
 
     /**
@@ -96,12 +96,14 @@ TEST_F(TestFileGetter, text_file)
 {
     const auto out_path = copy_file_via_file_getter("the_little_prince.txt");
     ASSERT_EQ("7FA80B27F53782ABA750F3730ED3431270D79F9F7CD9FFDBA3B65C9843FEA670", calc_sha256(out_path));
+    std::filesystem::remove(out_path);
 }
 
 TEST_F(TestFileGetter, binary_file)
 {
     const auto out_path = copy_file_via_file_getter("cat");
     ASSERT_EQ("A63158E6E5BCE20616425F5D61E5BD7374BB5BCCF15BBB93AE2E40238248F179", calc_sha256(out_path));
+    std::filesystem::remove(out_path);
 }
 
 } // namespace
