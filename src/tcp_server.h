@@ -24,19 +24,22 @@ static void socket_thread(sockpp::tcp_socket socket, const std::string& peer, co
     char buf[TCP_SERVER_BUFFER_SIZE];
     auto* const begin = reinterpret_cast<char*>(&buf);
     std::fill_n(begin, TCP_SERVER_BUFFER_SIZE, 0);
-    unsigned long long last_len = 0;
+
+    auto* tail = begin;
+    unsigned long long total_read_len = 0;
 
     // keep connection alive, but check port changing every TCP_SOCKET_TIMEOUT
     while (true)
     {
-        // only zeroing non-zero (used for storing last data) parts in every loop
-        std::fill_n(begin, last_len, 0);
-
         // blocking I/O until socket timeout
-        if (const sockpp::result<size_t> r = socket.read(buf, sizeof(buf)); r.value() > 0)
+        // accumulate reading, maybe client can't send / server can't read the whole filename
+        // within single socket.read()
+        if (const sockpp::result<size_t> r = socket.read(tail, TCP_SERVER_BUFFER_SIZE - total_read_len); r.value() > 0)
         {
             SPDLOG_DEBUG("[{}] sends: [{}]", peer, buf);
-            last_len = r.value();
+            const auto read_len = r.value();
+            total_read_len += read_len;
+            tail = tail + read_len;
         }
         else if (r.error().value() == 0 && r.value() == 0)
         {
