@@ -69,11 +69,17 @@ static void socket_thread(sockpp::tcp_socket socket, const std::string& peer, co
             SPDLOG_INFO("Connection with [{}] closed by peer", peer);
             break; // to listening new connection
         }
+        else if (r.error().value() == 138)
+        {
+            SPDLOG_ERROR("Inactive connection with [{}] timed out, close it", peer);
+            socket.close();
+            break;
+        }
         else
         {
             SPDLOG_ERROR("Error reading from connection with [{}], close it: {}", peer, r.error().message());
             socket.close();
-            break; // to listening new connection
+            break;
         }
     }
 }
