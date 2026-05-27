@@ -8,6 +8,7 @@
 #include <sockpp/tcp_acceptor.h>
 
 #include "constant.h"
+#include "file_getter.h"
 
 namespace tcp_server
 {
@@ -17,15 +18,32 @@ static int port;
 static std::chrono::seconds socket_timeout;
 static int max_connections;
 
+static void write_file_to_socket(sockpp::tcp_socket& socket, const char* file_name)
+{
+    char data_buf[1024];
+    // send the file
+    auto getter = file_getter::build_getter(file_name, data_buf, 1024);
+    long long data_read_len = 0;
+    do // NOLINT(*-avoid-do-while)
+    {
+        data_read_len = getter();
+        socket.write(data_buf, data_read_len);
+    } while (data_read_len != 0);
+}
+
 static void socket_thread(sockpp::tcp_socket socket, const std::string& peer, const std::chrono::seconds sock_timeout)
 {
     socket.read_timeout(sock_timeout);
 
-    char buf[TCP_SERVER_BUFFER_SIZE];
-    auto* const begin = reinterpret_cast<char*>(&buf);
-    std::fill_n(begin, TCP_SERVER_BUFFER_SIZE, 0);
+    if (file_getter::single_file_mode)
+        // start transferring immediately after connection established
+        write_file_to_socket(socket, "");
 
-    auto* tail = begin;
+    char buf[TCP_SERVER_BUFFER_SIZE];
+    auto* const received = reinterpret_cast<char*>(&buf);
+    std::fill_n(received, TCP_SERVER_BUFFER_SIZE, 0);
+
+    auto* tail = received;
     unsigned long long total_read_len = 0;
 
     // keep connection alive, but check port changing every TCP_SOCKET_TIMEOUT
@@ -40,6 +58,8 @@ static void socket_thread(sockpp::tcp_socket socket, const std::string& peer, co
             const auto read_len = r.value();
             total_read_len += read_len;
             tail = tail + read_len;
+            if (std::filesystem::exists(file_getter::combine_path(received)))
+                write_file_to_socket(socket, received);
         }
         else if (r.error().value() == 0 && r.value() == 0)
         {
