@@ -11,13 +11,15 @@
 #include "file_getter.h"
 #include "tcp_server.h"
 #define HELP_TEXT                                                                                              \
+    "transfer_file_over_socket v" APP_VERSION "\n"                                                             \
+    "link: " APP_LINK "\n"                                                                                     \
     "Usage: tfos [OPTIONS]\n\n"                                                                                \
     "OPTIONS:\n"                                                                                               \
     "  -f, --file            Served file(s) path, can be a directory or a file (default: working directory)\n" \
-    "  -p, --port            Which port to listen on (default: 18180)\n"                                       \
+    "  -p, --port            Which TCP port to listen on (default: 18180)\n"                                   \
     "  -t, --timeout         Inactive socket timeout (after connected) in seconds (default: 60)\n"             \
     "  -c, --max-conns       Maximum number of concurrent alive connections (default: 10)\n"                   \
-    "      --input-filter    Filter client message (default: [\\s\\n])\n"                                      \
+    "      --input-filter    Filter client message with regex (default: [\\s\\n])\n"                           \
     "  -h, --help            Show this help message\n"                                                         \
     "  -v, --verbose         Enable debug log\n"
 

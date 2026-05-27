@@ -1,6 +1,18 @@
 # tfos - transfer_file_over_socket
 
-> [!WARNING]
-> Work in progress, not ready for use.
+A simple program that sends files over TCP socket.
 
-A simple FTP like program that listens on port and send hosted files when asked
+```text
+transfer_file_over_socket v0.1.0
+link: https://github.com/boholder/transfer_file_over_socket
+Usage: tfos [OPTIONS]
+
+OPTIONS:
+  -f, --file            Served file(s) path, can be a directory or a file (default: working directory)
+  -p, --port            Which TCP port to listen on (default: 18180)
+  -t, --timeout         Inactive socket timeout (after connected) in seconds (default: 60)
+  -c, --max-conns       Maximum number of concurrent alive connections (default: 10)
+      --input-filter    Filter client message (default: [\s\n])
+  -h, --help            Show this help message
+  -v, --verbose         Enable debug log
+```
