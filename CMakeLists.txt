@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.2)
+cmake_minimum_required(VERSION 3.28)
 project(transfer_file_over_socket)
 
 set(CMAKE_CXX_STANDARD 23)
@@ -15,25 +15,28 @@ add_executable(tfos
 target_compile_features(tfos PUBLIC cxx_std_23)
 
 add_subdirectory(third)
-target_link_libraries(tfos
-        PRIVATE
-        spdlog::spdlog
-        Sockpp::sockpp
-)
+target_link_libraries(tfos PRIVATE spdlog::spdlog Sockpp::sockpp)
+
+# if you are in linux
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND UNIX AND NOT APPLE)
+    # "std::stacktrace" is used in this program
+    target_link_libraries(tfos PRIVATE stdc++_libbacktrace)
+    # If still fail (with newer GCC), use:
+    # target_link_libraries(tfos PRIVATE stdc++exp)
+endif ()
 # --- main executable end ---
 
 # --- unit test start ---
-add_executable(tests
-        test/test_file_getter.cpp
-)
+
+add_executable(tests test/test_file_getter.cpp)
 
 target_compile_features(tests PUBLIC cxx_std_23)
 
-target_link_libraries(tests
-        gtest
-        gtest_main
-        spdlog::spdlog
-)
+target_link_libraries(tests PRIVATE gtest gtest_main spdlog::spdlog)
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND UNIX AND NOT APPLE)
+    target_link_libraries(tests PRIVATE stdc++_libbacktrace)
+endif ()
 
 add_custom_command(
         TARGET tests POST_BUILD

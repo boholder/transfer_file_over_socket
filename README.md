@@ -16,3 +16,18 @@ OPTIONS:
   -h, --help            Show this help message
   -v, --verbose         Enable debug log
 ```
+
+## Build
+
+```shell
+cmake --list-presets
+cmake --preset <CHOSEN_PRESET>
+cmake --build cmake-build/<CHOSEN_PRESET> --target tfos
+```
+
+For example:
+
+```shell
+cmake --preset linux-x64-release
+cmake --build cmake-build/linux-x64-release --target tfos
+```
