@@ -1,4 +1,4 @@
-# tfos - transfer_file_over_socket
+# tfos – transfer_file_over_socket
 
 A simple program that sends files over TCP socket.
 
@@ -17,6 +17,12 @@ OPTIONS:
   -v, --verbose         Enable debug log
 ```
 
+By the way, you can achieve almost the same thing with `nc` or `ncat` command (on host/server machine):
+
+```shell
+ncat --listen --send-only port < file
+```
+
 ## Build
 
 ```shell
@@ -30,4 +36,20 @@ For example:
 ```shell
 cmake --preset linux-x64-release
 cmake --build cmake-build/linux-x64-release --target tfos
+```
+
+## Usage
+
+When you are landed on a server that doesn't have familiar tools like `curl`, `wget`, `ftp`, but have things below:
+
+```shell
+# the old solid nc
+# run `tfos --input-filter` to remove '\n' added by pipe
+echo "file-name" | nc ip port > output
+```
+
+```shell
+# https://nmap.org/ncat/
+# run `tfos --input-filter` to remove '\n' added by pipe
+echo "file-name" | ncat ip port -o output
 ```
