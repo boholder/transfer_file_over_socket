@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <regex>
 
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG
 #include <spdlog/spdlog.h>
@@ -17,6 +18,8 @@ namespace tcp_server
 static int port;
 static std::chrono::seconds socket_timeout;
 static int max_connections;
+static bool enable_filter_mode = false;
+static std::regex filter_pattern;
 
 static void write_file_to_socket(sockpp::tcp_socket& socket, const char* file_name)
 {
@@ -49,15 +52,29 @@ static void socket_thread(sockpp::tcp_socket socket, const std::string& peer, co
     // keep connection alive, but check port changing every TCP_SOCKET_TIMEOUT
     while (true)
     {
-        // blocking I/O until socket timeout
-        // accumulate reading, maybe client can't send / server can't read the whole filename
-        // within single socket.read()
+        // Blocking I/O until socket timeout.
+        // Accumulate reading, maybe the client can't send / server can't read
+        // the whole filename within single socket.read().
         if (const sockpp::result<size_t> r = socket.read(tail, TCP_SERVER_BUFFER_SIZE - total_read_len); r.value() > 0)
         {
             SPDLOG_DEBUG("[{}] sends: [{}]", peer, buf);
             const auto read_len = r.value();
             total_read_len += read_len;
             tail = tail + read_len;
+
+            if (enable_filter_mode)
+            {
+                std::string filtered_buf;
+                std::regex_replace(std::back_inserter(filtered_buf), received, tail, filter_pattern, "");
+                SPDLOG_DEBUG("[{}] filtered: [{}]", peer, filtered_buf);
+
+                // write filtered content back to buf
+                std::fill_n(received, total_read_len, 0);
+                std::ranges::copy(filtered_buf, received);
+                total_read_len = filtered_buf.length();
+                tail = received + filtered_buf.length();
+            }
+
             if (std::filesystem::exists(file_getter::combine_path(received)))
                 write_file_to_socket(socket, received);
         }

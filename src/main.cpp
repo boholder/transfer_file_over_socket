@@ -10,14 +10,15 @@
 #include "constant.h"
 #include "file_getter.h"
 #include "tcp_server.h"
-#define HELP_TEXT                                                                                                      \
-    "Usage: tfos [OPTIONS]\n\n"                                                                                        \
-    "OPTIONS:\n"                                                                                                       \
-    "  -f, --file            Served file(s) path, can be a directory or a file (default: current working directory)\n" \
-    "  -p, --port            Which port to listen on    (default: 18180)\n"                                            \
-    "  -t, --timeout         Inactive socket timeout (after connected) in seconds (default: 60)\n"                     \
-    "  -c, --max-connections Maximum number of concurrent connections (default: 10)\n"                                 \
-    "  -h, --help            Show this help message\n"                                                                 \
+#define HELP_TEXT                                                                                              \
+    "Usage: tfos [OPTIONS]\n\n"                                                                                \
+    "OPTIONS:\n"                                                                                               \
+    "  -f, --file            Served file(s) path, can be a directory or a file (default: working directory)\n" \
+    "  -p, --port            Which port to listen on (default: 18180)\n"                                       \
+    "  -t, --timeout         Inactive socket timeout (after connected) in seconds (default: 60)\n"             \
+    "  -c, --max-conns       Maximum number of concurrent alive connections (default: 10)\n"                   \
+    "      --input-filter    Filter client message (default: [\\s\\n])\n"                                      \
+    "  -h, --help            Show this help message\n"                                                         \
     "  -v, --verbose         Enable debug log\n"
 
 static std::string EMPTY;
@@ -115,6 +116,15 @@ static void parse_cmd_args(const int argc, char** argv) // NOLINT(*-function-cog
     std::string max_connections_str;
     ASSIGN_OPTION("-c", "--max-connections", max_connections_str, "10");
     tcp_server::max_connections = std::stoi(max_connections_str);
+
+    if (OPTION_PASSED("--input-filter", "--input-filter"))
+    {
+        tcp_server::enable_filter_mode = true;
+        static std::string filter_pattern = input.getCmdOption("--input-filter");
+        if (filter_pattern.empty())
+            filter_pattern = "[\\s\n]";
+        tcp_server::filter_pattern = std::regex(filter_pattern);
+    }
 }
 
 int main(const int argc, char** argv) // NOLINT(*-exception-escape)
